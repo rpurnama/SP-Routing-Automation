@@ -1,0 +1,24 @@
+---
+#This script is written by @rpoernama
+- hosts: xrv-routers
+  gather_facts: false
+  connection: local
+
+  tasks:
+   - name: timestamp
+     local_action: command date +%Y%m%d
+     register: timestamp
+
+   - name: display full configuration
+     iosxr_command:
+      commands: show run
+      host: "{{ ansible_host }}"
+      username: netlab
+      password: netlab
+     register: output
+
+   - name: save config to file
+     copy:
+      content: "{{ output.stdout[0] }}"
+      dest: "/home/netlab/tmp/sp_auto_backup/{{ inventory_hostname }}_{{ timestamp.stdout }}_config.txt"
+
