@@ -13,8 +13,8 @@
      iosxr_command:
       commands: show run
       host: "{{ ansible_host }}"
-      username: netlab
-      password: netlab
+      username: "your router user ID"
+      password: "your router password"
      register: output
 
    - name: save config to file
