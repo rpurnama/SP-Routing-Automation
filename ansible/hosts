@@ -1,8 +1,8 @@
 [iosxr:vars]
 ansible_connection=network_cli
 ansible_network_os=iosxr
-ansible_user=netlab
-ansible_password=netlab
+ansible_user="your router username"
+ansible_password="your router password"
 
 [xrv-routers]
 R1 ansible_host=172.16.68.101
