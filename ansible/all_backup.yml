@@ -1,5 +1,8 @@
 ---
-#This script is written by @rpoernama
+#This is a YAML file to backup all configuration in IOS and XRv routers
+#Created by: rpoernama
+#Version: 0.0
+#Date: 02-Feb-2020
 - hosts: routers
   gather_facts: false
   connection: local
