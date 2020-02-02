@@ -1,20 +1,19 @@
----
-#This script is written by @rpoernama
-- hosts: xrv-routers
+--- #This script is written by @rpoernama
+- hosts: ios-routers
   gather_facts: false
   connection: local
-
   tasks:
    - name: timestamp
      local_action: command date +%Y%m%d
      register: timestamp
 
    - name: display full configuration
-     iosxr_command:
+     ios_command:
       commands: show run
       host: "{{ ansible_host }}"
       username: netlab
       password: netlab
+      timeout: 30
      register: output
 
    - name: save config to file

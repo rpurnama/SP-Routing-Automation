@@ -1,0 +1,42 @@
+---
+#This script is written by @rpoernama
+- hosts: routers
+  gather_facts: false
+  connection: local
+
+  tasks:
+   - name: timestamp
+     local_action: command date +%Y%m%d
+     register: timestamp
+
+#--- Backup Configuration for IOS-XRv
+   - name: Display XRV full config
+     iosxr_command:
+      commands: show run
+      host: "{{ ansible_host }}"
+      username: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+     register: backup_xrv
+     when: ansible_network_os == "iosxr"
+
+   - name: Save XRV config to file
+     copy:
+      content: "{{ backup_xrv.stdout[0] }}"
+      dest: "/home/netlab/tmp/sp_auto_backup/{{ inventory_hostname }}_{{ timestamp.stdout }}_config.txt"
+     when: ansible_network_os == "iosxr"
+
+#--- Backup Configuration for IOS
+   - name: Display IOS full config
+     ios_command:
+      commands: show run
+      host: "{{ ansible_host }}"
+      username: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+     register: backup_ios
+     when: ansible_network_os == "ios"
+
+   - name: Save IOS config to file
+     copy:
+      content: "{{ backup_ios.stdout[0] }}"
+      dest: "/home/netlab/tmp/sp_auto_backup/{{ inventory_hostname }}_{{ timestamp.stdout }}_config.txt"
+     when: ansible_network_os == "ios"

@@ -1,0 +1,49 @@
+---
+#This is YAML file to remove existing routing protocol on P/PE router
+#Created by: rpoernama
+#Version: 0.0
+#Date: 02-Feb-2020
+
+- name: Connect to P routers (except R2)
+  hosts: R3, R4, R5
+  gather_facts: false
+  connection: network_cli
+  tasks:
+  - name: Remove routing protocol on P routers
+    iosxr_config:
+     lines:
+     - no router ospf 1
+#     - no mpls ldp
+     - commit
+
+     host: "{{ ansible_host }}"
+     username: "{{ ansible_user }}"
+     password: "{{ ansible_password }}"
+#    register: p_out
+
+#  - name: Display result of P routers	
+#    debug:
+#     var: p_out.stdout_lines
+
+- name: Connect to PE routers (except R1)
+  hosts: R6
+  gather_facts: false
+  connection: network_cli
+  tasks:
+  - name: Remove routing protocol on PE routers
+    iosxr_config:
+     lines:
+      - no router ospf 1
+#      - no mpls ldp
+      - no router bgp 65001
+      - commit
+
+     host: "{{ ansible_host }}"
+     username: "{{ ansible_user }}"
+     password: "{{ ansible_password }}"
+
+#   register: pe_out
+
+#  - name: Display result of PE routers	
+#    debug:
+#     var: pe_out.stdout_lines
