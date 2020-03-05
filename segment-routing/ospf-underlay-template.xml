@@ -1,0 +1,150 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="ospf-underlay">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device tags="nocreate">
+      <name>{/device}</name>
+      <config tags="merge">
+      
+      <!-- OSPF Configuration Template for XRv Router -->
+      <router xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge">
+      <ospf>
+        <name>{/ospf-id}</name>
+        <router-id>{/router-id}</router-id>
+        <area>
+          <id>{/area-id}</id>
+          <passive tags="merge" when="{/def-passive-int='true'}">
+            <mode>enable</mode>
+          </passive>
+          <mpls>
+            <traffic-eng/>
+          </mpls>
+          <interface>
+            <name>GigabitEthernet{/GigEth-Interface[1]/GigabitEthernet}</name>
+            <passive tags="merge" when="{/def-passive-int='true'}">
+              <mode>disable</mode>
+            </passive>
+            <network>{/GigEth-Interface[1]/ospf-net-type}</network>
+          </interface>
+          
+          <interface>
+            <name>GigabitEthernet{/GigEth-Interface[2]/GigabitEthernet}</name>
+            <passive tags="merge" when="{/def-passive-int='true'}">
+              <mode>disable</mode>
+            </passive>
+            <network>{/GigEth-Interface[2]/ospf-net-type}</network>
+          </interface>
+          
+          <interface>
+            <name>GigabitEthernet{/GigEth-Interface[3]/GigabitEthernet}</name>
+            <passive tags="merge" when="{/def-passive-int='true'}">
+              <mode>disable</mode>
+            </passive>
+            <network>{/GigEth-Interface[3]/ospf-net-type}</network>
+          </interface>
+          
+          <interface>
+            <name>GigabitEthernet{/GigEth-Interface[4]/GigabitEthernet}</name>
+            <passive tags="merge" when="{/def-passive-int='true'}">
+              <mode>disable</mode>
+            </passive>
+            <network>{/GigEth-Interface[4]/ospf-net-type}</network>
+          </interface>
+          
+          <!-- TEMPORARY UNUSED
+          <interface>
+            <name>GigabitEthernet0/0/0/3</name>
+            <passive>
+              <mode>disable</mode>
+            </passive>
+            <network>point-to-point</network>
+          </interface>
+          -->
+          <interface>
+            <name>Loopback{/Loopback-Interface[1]/Loopback}</name>
+            <prefix-sid tags="merge" when="{/segment-routing='true'}">
+              <index>{/sr-pfx-sid}</index>
+            </prefix-sid>
+          </interface>
+        </area>
+        <segment-routing tags="merge" when="{/segment-routing='true'}">
+          <mpls/>
+          <sr-prefer>
+          </sr-prefer>
+        </segment-routing>
+        <mpls tags="merge">
+          <traffic-eng>
+            <router-id>
+              <Loopback>0</Loopback>
+            </router-id>
+          </traffic-eng>
+        </mpls>
+      </ospf>
+      </router>
+      <!-- End of OSPF Configuration Template -->
+        
+      <!-- MPLS LDP Configuration Template -->
+      <ipv4 xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge">
+        <access-list>
+          <named-acl>
+            <name>no_ldp</name>
+            <rule>
+              <id>10</id>
+              <line>deny tcp any eq ldp any</line>
+            </rule>
+            <rule>
+              <id>20</id>
+              <line>deny tcp any any eq ldp</line>
+            </rule>
+          </named-acl>
+        </access-list>
+      </ipv4>
+      
+      <mpls xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge" when="{/mpls-ldp='true'}">
+      <ldp>
+        <router-id>{/router-id}</router-id>
+        <address-family tags="merge" when="{/segment-routing='true'}">
+          <ipv4>
+            <label>
+              <local>
+                <allocate>
+                  <for>no_ldp</for>
+                </allocate>
+              </local>
+            </label>
+          </ipv4>
+        </address-family>
+        <interface>
+          <name>GigabitEthernet{/GigEth-Interface[1]/GigabitEthernet}</name>
+        </interface>
+        
+        <interface>
+          <name>GigabitEthernet{/GigEth-Interface[2]/GigabitEthernet}</name>
+        </interface>
+        
+        <interface>
+          <name>GigabitEthernet{/GigEth-Interface[3]/GigabitEthernet}</name>
+        </interface>
+        
+        <interface>
+          <name>GigabitEthernet{/GigEth-Interface[4]/GigabitEthernet}</name>
+        </interface>
+
+        <!-- TEMPORARY UNUSED
+        <interface>
+          <name>{../GigEth-Interface/GigEth}</name>
+        </interface>
+        <interface>
+          <name>{../GigEth-Interface/GigEth}</name>
+        </interface>
+        <interface>
+          <name>{../GigEth-Interface/GigEth}</name>
+        </interface>
+        -->
+      </ldp>
+      </mpls>
+      <!-- End of MPLS LDP Configuration Template -->
+      
+      </config>
+    </device>
+  </devices>
+</config-template>

@@ -1,0 +1,168 @@
+module ospf-underlay {
+	namespace "http://com/example/ospf-underlay";
+	prefix ospf-underlay;
+	
+	import ietf-inet-types {
+		prefix inet;
+	}
+  
+	import tailf-ncs {
+		prefix ncs;
+	}
+  
+	import tailf-common {
+		prefix tailf;
+	}
+  
+	import tailf-ned-cisco-ios-xr {
+		prefix cisco-ios-xr;
+	}
+  
+	/*
+	import tailf-ned-cisco-ios {
+		prefix ios;
+	}*/
+  
+	contact rakhmadian_purnama@yahoo.com;
+	description "OSPF Underlay for Segment Routing Network";
+	
+	revision 2020-01-01 {
+		description "Initial draft revision";
+	}
+
+	list ospf-underlay {
+		key name;
+		uses ncs:service-data;
+		ncs:servicepoint "ospf-underlay";
+		
+		leaf name {
+			tailf:info "Transport Service Name";
+			type string;
+		}
+		
+		leaf ospf-id {
+			tailf:info "OSPF Process ID";			
+			type uint16 {
+				range "1..100";
+			}
+			default "1";
+		}
+		
+		leaf device {
+			tailf:info "OSPF Device";
+			type leafref {
+				path "/ncs:devices/ncs:device/ncs:name";
+			}
+		}
+		
+		leaf router-id {
+			tailf:info "OSPF Router ID";
+			type inet:ip-address;
+		}
+		
+		leaf def-passive-int {
+			tailf:info "Default Passive Interface";
+			type boolean;
+			default true;
+		}
+		
+		leaf area-id {
+			tailf:info "OSPF Area ID";
+			default 0;
+			type uint16 {
+				range "0..255";
+			}
+		}
+		
+		leaf mpls-ldp {
+			tailf:info "MPLS LDP Enabled";
+			type boolean;
+			default false;
+		}
+		
+		leaf rsvp-te {
+			tailf:info "RSVP-TE Enabled";
+			type boolean;
+			default false;
+		}
+		
+		leaf segment-routing {
+			tailf:info "Enable SR";
+			type boolean;
+			default false;
+		}
+		
+		leaf sr-pfx-sid {
+			when "/ncs:devices/ncs:device[ncs:name=current()/../device]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
+			}
+			tailf:info "SR Prefix SID";
+			type uint16 {
+				range "0..255";
+			}
+			
+		}
+		
+		list Loopback-Interface {
+			when "/ncs:devices/ncs:device[ncs:name=current()/../device]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
+			}
+			
+			key Loopback;
+			description "List of Loopback interface on XRv router";
+			leaf Loopback {
+				type leafref {
+					path "deref(../../device)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:Loopback/cisco-ios-xr:id";
+				}
+			}			
+		}
+		
+		list GigEth-Interface {
+			when "/ncs:devices/ncs:device[ncs:name=current()/../device]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
+			}
+			key GigabitEthernet;
+			description "List of GigabitEthernet interface on XRv router";
+			leaf GigabitEthernet {
+				type leafref {
+					path "deref(../../device)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:GigabitEthernet/cisco-ios-xr:id";
+				}
+			}
+			
+			leaf ospf-net-type {
+				tailf:info "GE OSPF Network Type";
+				type enumeration {
+					enum point-to-point;
+					enum broadcast;
+				}
+				default point-to-point;			
+			}
+		
+		}
+		
+		/* TEMPORARY UNUSED
+		choice interface {
+			case loop {
+				leaf Loopback {
+					type leafref {
+						path "deref(../device)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:Loopback/cisco-ios-xr:id";
+					}
+				}
+			}
+			
+			case gig {
+				leaf GigabitEthernet {
+					type leafref {
+						path "deref(../device)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:GigabitEthernet/cisco-ios-xr:id";
+					}
+				}
+				
+				leaf GigEth-ospf-net-type {
+					tailf:info "GE OSPF Network Type";
+					type enumeration {
+						enum point-to-point;
+						enum broadcast;
+					}
+					default point-to-point;
+				}
+			}	
+		}*/
+	}
+}
