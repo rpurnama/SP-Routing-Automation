@@ -1,0 +1,504 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="vpn-services">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+
+	<!--- VRF Creation and Assignment --->
+	<device>
+    <name>{/vrf-creation/vrf-node-name}</name>
+    <config>
+
+		<vrf xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge">
+		<vrf-list>
+			<name>{/vrf-creation/customer-vrf[1]/vrf-name}</name>
+			<address-family>
+			<ipv4>
+				<unicast>
+				<import>
+					<route-target>
+					<address-list>
+						<name>{/vrf-creation/customer-vrf[1]/imported-rt}</name>
+					</address-list>
+					</route-target>
+				</import>
+				<export>
+					<route-target>
+					<address-list>
+						<name>{/vrf-creation/customer-vrf[1]/exported-rt}</name>
+					</address-list>
+					</route-target>
+				</export>
+				</unicast>
+			</ipv4>
+			</address-family>
+		</vrf-list>
+
+    <vrf-list>
+      <name>{/vrf-creation/customer-vrf[2]/vrf-name}</name>
+      <address-family>
+      <ipv4>
+        <unicast>
+        <import>
+          <route-target>
+          <address-list>
+            <name>{/vrf-creation/customer-vrf[2]/imported-rt}</name>
+          </address-list>
+          </route-target>
+        </import>
+        <export>
+          <route-target>
+          <address-list>
+            <name>{/vrf-creation/customer-vrf[2]/exported-rt}</name>
+          </address-list>
+          </route-target>
+        </export>
+        </unicast>
+      </ipv4>
+      </address-family>
+    </vrf-list>
+
+    <vrf-list>
+      <name>{/vrf-creation/customer-vrf[3]/vrf-name}</name>
+      <address-family>
+      <ipv4>
+        <unicast>
+        <import>
+          <route-target>
+          <address-list>
+            <name>{/vrf-creation/customer-vrf[3]/imported-rt}</name>
+          </address-list>
+          </route-target>
+        </import>
+        <export>
+          <route-target>
+          <address-list>
+            <name>{/vrf-creation/customer-vrf[3]/exported-rt}</name>
+          </address-list>
+          </route-target>
+        </export>
+        </unicast>
+      </ipv4>
+      </address-family>
+    </vrf-list>
+
+    <vrf-list>
+      <name>{/vrf-creation/customer-vrf[4]/vrf-name}</name>
+      <address-family>
+      <ipv4>
+        <unicast>
+        <import>
+          <route-target>
+          <address-list>
+            <name>{/vrf-creation/customer-vrf[4]/imported-rt}</name>
+          </address-list>
+          </route-target>
+        </import>
+        <export>
+          <route-target>
+          <address-list>
+            <name>{/vrf-creation/customer-vrf[4]/exported-rt}</name>
+          </address-list>
+          </route-target>
+        </export>
+        </unicast>
+      </ipv4>
+      </address-family>
+    </vrf-list>
+		</vrf>
+
+    <!--- Assign Customer-1 VRF to Interface --->
+    <!-- Loopback Interface -->
+    <interface xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge">
+      <Loopback>
+        <id>{/vrf-creation/Loopback-Interface[1]/Loopback}</id>
+        <vrf>{/vrf-creation/Loopback-Interface[1]/loop-vrf}</vrf>
+        <ipv4>
+          <address>
+            <ip>{/vrf-creation/Loopback-Interface[1]/loopback-address}</ip>
+            <mask>{/vrf-creation/Loopback-Interface[1]/loopback-mask}</mask>
+          </address>
+        </ipv4>
+      </Loopback>
+
+      <Loopback>
+        <id>{/vrf-creation/Loopback-Interface[2]/Loopback}</id>
+        <vrf>{/vrf-creation/Loopback-Interface[2]/loop-vrf}</vrf>
+        <ipv4>
+          <address>
+            <ip>{/vrf-creation/Loopback-Interface[2]/loopback-address}</ip>
+            <mask>{/vrf-creation/Loopback-Interface[2]/loopback-mask}</mask>
+          </address>
+        </ipv4>
+      </Loopback>
+
+      <Loopback>
+        <id>{/vrf-creation/Loopback-Interface[3]/Loopback}</id>
+        <vrf>{/vrf-creation/Loopback-Interface[3]/loop-vrf}</vrf>
+        <ipv4>
+          <address>
+            <ip>{/vrf-creation/Loopback-Interface[3]/loopback-address}</ip>
+            <mask>{/vrf-creation/Loopback-Interface[3]/loopback-mask}</mask>
+          </address>
+        </ipv4>
+      </Loopback>
+
+      <!-- GigabitEthernet Interface -->
+      <GigabitEthernet>
+        <id>{/vrf-creation/GigEth-Interface[1]/GigabitEthernet}</id>
+        <!--- <description>** To CE-A1 Fa0/0 **</description> --->
+        <vrf>{/vrf-creation/GigEth-Interface[1]/gig-vrf}</vrf>
+        <ipv4>
+          <address>
+            <ip>{/vrf-creation/GigEth-Interface[1]/gig-int-address}</ip>
+            <mask>{/vrf-creation/GigEth-Interface[1]/gig-int-mask}</mask>
+          </address>
+        </ipv4>
+        <shutdown tags="delete" when="{/vrf-creation/GigEth-Interface[1]/int-enabled='true'}"></shutdown>
+      </GigabitEthernet>
+
+      <GigabitEthernet>
+        <id>{/vrf-creation/GigEth-Interface[2]/GigabitEthernet}</id>
+        <vrf>{/vrf-creation/GigEth-Interface[2]/gig-vrf}</vrf>
+        <ipv4>
+          <address>
+            <ip>{/vrf-creation/GigEth-Interface[2]/gig-int-address}</ip>
+            <mask>{/vrf-creation/GigEth-Interface[2]/gig-int-mask}</mask>
+          </address>
+        </ipv4>
+        <shutdown tags="delete" when="{/vrf-creation/GigEth-Interface[2]/int-enabled='true'}"></shutdown>
+      </GigabitEthernet>
+
+      <GigabitEthernet>
+        <id>{/vrf-creation/GigEth-Interface[3]/GigabitEthernet}</id>
+        <vrf>{/vrf-creation/GigEth-Interface[3]/gig-vrf}</vrf>
+        <ipv4>
+          <address>
+            <ip>{/vrf-creation/GigEth-Interface[3]/gig-int-address}</ip>
+            <mask>{/vrf-creation/GigEth-Interface[3]/gig-int-mask}</mask>
+          </address>
+        </ipv4>
+        <shutdown tags="delete" when="{/vrf-creation/GigEth-Interface[3]/int-enabled='true'}"></shutdown>
+      </GigabitEthernet>
+
+      <GigabitEthernet>
+        <id>{/vrf-creation/GigEth-Interface[4]/GigabitEthernet}</id>
+        <vrf>{/vrf-creation/GigEth-Interface[4]/gig-vrf}</vrf>
+        <ipv4>
+          <address>
+            <ip>{/vrf-creation/GigEth-Interface[4]/gig-int-address}</ip>
+            <mask>{/vrf-creation/GigEth-Interface[4]/gig-int-mask}</mask>
+          </address>
+        </ipv4>
+        <shutdown tags="delete" when="{/vrf-creation/GigEth-Interface[4]/int-enabled='true'}"></shutdown>
+      </GigabitEthernet>
+    </interface>
+    </config>
+  </device>
+
+	<!--- Static Route Device --->
+    <device>
+      <name>{/static-routing/static-node}</name>
+
+      <config>
+      <router xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge">
+      <static>
+        <vrf>
+          <name>{/static-routing/static[1]/cust-vrf-name}</name>
+          <address-family tags="merge">
+            <ipv4>
+              <unicast>
+                <routes-ip>
+                  <net>{/static-routing/static[1]/net-address}/{/static-routing/static[1]/mask-length}</net>
+                  <address>{/static-routing/static[1]/next-hop}</address>
+                </routes-ip>
+              </unicast>
+            </ipv4>
+          </address-family>
+        </vrf>
+      </static>
+
+      <static>
+        <vrf>
+          <name>{/static-routing/static[2]/cust-vrf-name}</name>
+          <address-family tags="merge">
+            <ipv4>
+              <unicast>
+                <routes-ip>
+                  <net>{/static-routing/static[2]/net-address}/{/static-routing/static[2]/mask-length}</net>
+                  <address>{/static-routing/static[2]/next-hop}</address>
+                </routes-ip>
+              </unicast>
+            </ipv4>
+          </address-family>
+        </vrf>
+      </static>
+
+      <static>
+        <vrf>
+          <name>{/static-routing/static[3]/cust-vrf-name}</name>
+          <address-family tags="merge">
+            <ipv4>
+              <unicast>
+                <routes-ip>
+                  <net>{/static-routing/static[3]/net-address}/{/static-routing/static[3]/mask-length}</net>
+                  <address>{/static-routing/static[3]/next-hop}</address>
+                </routes-ip>
+              </unicast>
+            </ipv4>
+          </address-family>
+        </vrf>
+      </static>
+
+      <static>
+        <vrf>
+          <name>{/static-routing/static[4]/cust-vrf-name}</name>
+          <address-family tags="merge">
+            <ipv4>
+              <unicast>
+                <routes-ip>
+                  <net>{/static-routing/static[4]/net-address}/{/static-routing/static[4]/mask-length}</net>
+                  <address>{/static-routing/static[4]/next-hop}</address>
+                </routes-ip>
+              </unicast>
+            </ipv4>
+          </address-family>
+        </vrf>
+      </static>
+      </router>
+      </config>
+    </device>
+
+    <!--- MP-BGP Router Configuration --->
+    <device>
+      <name>{/bgp-routing/bgp-node}</name>
+
+      <config>
+      <router xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge">
+      <bgp>
+        <bgp-no-instance>
+          <id>{/bgp-routing/bgp[1]/asn}</id>
+          <bgp>
+            <router-id>{/bgp-routing/bgp[1]/bgp-rid}</router-id>
+          </bgp>
+          <address-family tags="merge">
+            <ipv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-ipv4='true'}">
+              <unicast>
+              </unicast>
+            </ipv4>
+            <vpnv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-vpnv4='true'}">
+              <unicast>
+              </unicast>
+            </vpnv4>
+          </address-family>
+
+          <!--- BGP Transport Neighborship between PE-to-PE --->
+          <neighbor>
+            <id>{/bgp-routing/bgp[1]/mp-bgp-peer[1]/peer-id}</id>
+            <remote-as>{/bgp-routing/bgp[1]/mp-bgp-peer[1]/peer-asn}</remote-as>
+            <update-source>
+              <Loopback>{/bgp-routing/bgp[1]/mp-bgp-peer[1]/update-loopback-intf}</Loopback>
+            </update-source>
+            <address-family>
+              <vpnv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-vpnv4='true'}">
+                <unicast>
+                </unicast>
+              </vpnv4>
+            </address-family>
+          </neighbor>
+
+          <neighbor>
+            <id>{/bgp-routing/bgp[1]/mp-bgp-peer[2]/peer-id}</id>
+            <remote-as>{/bgp-routing/bgp[1]/mp-bgp-peer[2]/peer-asn}</remote-as>
+            <address-family>
+              <vpnv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-vpnv4='true'}">
+                <unicast>
+                </unicast>
+              </vpnv4>
+            </address-family>
+          </neighbor>
+
+          <neighbor>
+            <id>{/bgp-routing/bgp[1]/mp-bgp-peer[3]/peer-id}</id>
+            <remote-as>{/bgp-routing/bgp[1]/mp-bgp-peer[3]/peer-asn}</remote-as>
+            <address-family>
+              <vpnv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-vpnv4='true'}">
+                <unicast>
+                </unicast>
+              </vpnv4>
+            </address-family>
+          </neighbor>
+
+          <neighbor>
+            <id>{/bgp-routing/bgp[1]/mp-bgp-peer[4]/peer-id}</id>
+            <remote-as>{/bgp-routing/bgp[1]/mp-bgp-peer[4]/peer-asn}</remote-as>
+            <address-family>
+              <vpnv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-vpnv4='true'}">
+                <unicast>
+                </unicast>
+              </vpnv4>
+            </address-family>
+          </neighbor>
+
+          <!--- BGP VPN Customer services configuration --->
+          <vrf>
+            <name>{/bgp-routing/bgp[1]/bgp-vrf-services[1]/bgp-vrf-name}</name>
+            <rd>{/bgp-routing/bgp[1]/bgp-vrf-services[1]/rd-id}</rd>
+            <address-family>
+              <ipv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-ipv4='true'}">
+                <unicast>
+                  <!--- This is VPN Services to Redistribute Static Routing Customer --->
+                  <redistribute tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[1]/if-cust-static='true'}">
+                    <static>
+                    </static>
+                  </redistribute>
+
+                  <!--- This is to advertise specific network address --->
+                  <network tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[1]/if-adv-network='true'}">
+                    <net>{/bgp-routing/bgp[1]/bgp-vrf-services[1]/adv-network}/{/bgp-routing/bgp[1]/bgp-vrf-services[1]/adv-bit-mask}</net>
+                  </network>
+                </unicast>
+              </ipv4>
+            </address-family>
+
+            <!--- This is VPN Services for BGP Peering to Customer --->
+            <neighbor tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[1]/if-cust-bgp='true'}">
+              <id>{/bgp-routing/bgp[1]/bgp-vrf-services[1]/cust-bgp-peer[1]/cust-peer}</id>
+              <remote-as>{/bgp-routing/bgp[1]/bgp-vrf-services[1]/cust-bgp-peer[1]/cust-asn}</remote-as>
+              <update-source>
+                <GigabitEthernet>{/bgp-routing/bgp[1]/bgp-vrf-services[1]/cust-bgp-peer[1]/update-source-intf}</GigabitEthernet>
+              </update-source>
+              <address-family tags="merge">
+                <ipv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-ipv4='true'}">
+                  <unicast>
+                    <route-policy tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[1]/cust-bgp-peer[1]/default-rpl-ebgp='true'}">
+                      <direction>in</direction>
+                      <name>ACCEPT</name>
+                    </route-policy>
+                    <route-policy tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[1]/cust-bgp-peer[1]/default-rpl-ebgp='true'}">
+                      <direction>out</direction>
+                      <name>ACCEPT</name>
+                    </route-policy>
+                    <as-override>
+                    </as-override>
+                    <maximum-prefix>
+                      <max-prefix-limit>100</max-prefix-limit>
+                      <threshold>80</threshold>
+                    </maximum-prefix>
+                  </unicast>
+                </ipv4>
+              </address-family>
+            </neighbor>
+
+            <neighbor tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[1]/if-cust-bgp='true'}">
+              <id>{/bgp-routing/bgp[1]/bgp-vrf-services[1]/cust-bgp-peer[2]/cust-peer}</id>
+              <remote-as>{/bgp-routing/bgp[1]/bgp-vrf-services[1]/cust-bgp-peer[2]/cust-asn}</remote-as>
+              <update-source>
+                <GigabitEthernet>{/bgp-routing/bgp[1]/bgp-vrf-services[1]/cust-bgp-peer[2]/update-source-intf}</GigabitEthernet>
+              </update-source>
+              <address-family tags="merge">
+                <ipv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-ipv4='true'}">
+                  <unicast>
+                    <route-policy tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[1]/cust-bgp-peer[2]/default-rpl-ebgp='true'}">
+                      <direction>in</direction>
+                      <name>ACCEPT</name>
+                    </route-policy>
+                    <route-policy tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[1]/cust-bgp-peer[2]/default-rpl-ebgp='true'}">
+                      <direction>out</direction>
+                      <name>ACCEPT</name>
+                    </route-policy>
+                    <as-override>
+                    </as-override>
+                    <maximum-prefix>
+                      <max-prefix-limit>100</max-prefix-limit>
+                      <threshold>80</threshold>
+                    </maximum-prefix>
+                  </unicast>
+                </ipv4>
+              </address-family>
+            </neighbor>
+          </vrf>
+
+          <vrf>
+            <name>{/bgp-routing/bgp[1]/bgp-vrf-services[2]/bgp-vrf-name}</name>
+            <rd>{/bgp-routing/bgp[1]/bgp-vrf-services[2]/rd-id}</rd>
+            <address-family>
+              <ipv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-ipv4='true'}">
+                <unicast>
+                  <!--- This is VPN Services to Redistribute Static Routing Customer --->
+                  <redistribute tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[2]/if-cust-static='true'}">
+                    <static>
+                    </static>
+                  </redistribute>
+
+                  <!--- This is to advertise specific network address --->
+                  <network tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[2]/if-adv-network='true'}">
+                    <net>{/bgp-routing/bgp[1]/bgp-vrf-services[2]/adv-network}/{/bgp-routing/bgp[1]/bgp-vrf-services[2]/adv-bit-mask}</net>
+                  </network>
+                </unicast>
+              </ipv4>
+            </address-family>
+
+            <!--- This is VPN Services for BGP Peering to Customer --->
+            <neighbor tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[2]/if-cust-bgp='true'}">
+              <id>{/bgp-routing/bgp[1]/bgp-vrf-services[2]/cust-bgp-peer[1]/cust-peer}</id>
+              <remote-as>{/bgp-routing/bgp[1]/bgp-vrf-services[2]/cust-bgp-peer[1]/cust-asn}</remote-as>
+              <update-source>
+                <GigabitEthernet>{/bgp-routing/bgp[1]/bgp-vrf-services[2]/cust-bgp-peer[1]/update-source-intf}</GigabitEthernet>
+              </update-source>
+              <address-family tags="merge">
+                <ipv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-ipv4='true'}">
+                  <unicast>
+                    <route-policy tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[2]/cust-bgp-peer[1]/default-rpl-ebgp='true'}">
+                      <direction>in</direction>
+                      <name>ACCEPT</name>
+                    </route-policy>
+                    <route-policy tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[2]/cust-bgp-peer[1]/default-rpl-ebgp='true'}">
+                      <direction>out</direction>
+                      <name>ACCEPT</name>
+                    </route-policy>
+                    <as-override>
+                    </as-override>
+                    <maximum-prefix>
+                      <max-prefix-limit>100</max-prefix-limit>
+                      <threshold>80</threshold>
+                    </maximum-prefix>
+                  </unicast>
+                </ipv4>
+              </address-family>
+            </neighbor>
+
+            <neighbor tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[2]/if-cust-bgp='true'}">
+              <id>{/bgp-routing/bgp[1]/bgp-vrf-services[2]/cust-bgp-peer[2]/cust-peer}</id>
+              <remote-as>{/bgp-routing/bgp[1]/bgp-vrf-services[2]/cust-bgp-peer[2]/cust-asn}</remote-as>
+              <update-source>
+                <GigabitEthernet>{/bgp-routing/bgp[1]/bgp-vrf-services[2]/cust-bgp-peer[2]/update-source-intf}</GigabitEthernet>
+              </update-source>
+              <address-family tags="merge">
+                <ipv4 tags="merge" when="{/bgp-routing/bgp[1]/bgp-afi-ipv4='true'}">
+                  <unicast>
+                    <route-policy tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[2]/cust-bgp-peer[2]/default-rpl-ebgp='true'}">
+                      <direction>in</direction>
+                      <name>ACCEPT</name>
+                    </route-policy>
+                    <route-policy tags="merge" when="{/bgp-routing/bgp[1]/bgp-vrf-services[2]/cust-bgp-peer[2]/default-rpl-ebgp='true'}">
+                      <direction>out</direction>
+                      <name>ACCEPT</name>
+                    </route-policy>
+                    <as-override>
+                    </as-override>
+                    <maximum-prefix>
+                      <max-prefix-limit>100</max-prefix-limit>
+                      <threshold>80</threshold>
+                    </maximum-prefix>
+                  </unicast>
+                </ipv4>
+              </address-family>
+            </neighbor>
+          </vrf>
+        </bgp-no-instance>
+      </bgp>
+      </router>
+      </config>
+    </device>
+
+  </devices>
+</config-template>

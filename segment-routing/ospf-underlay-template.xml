@@ -4,7 +4,7 @@
     <device tags="nocreate">
       <name>{/device}</name>
       <config tags="merge">
-      
+
       <!-- OSPF Configuration Template for XRv Router -->
       <router xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge">
       <ospf>
@@ -25,7 +25,7 @@
             </passive>
             <network>{/GigEth-Interface[1]/ospf-net-type}</network>
           </interface>
-          
+
           <interface>
             <name>GigabitEthernet{/GigEth-Interface[2]/GigabitEthernet}</name>
             <passive tags="merge" when="{/def-passive-int='true'}">
@@ -33,7 +33,7 @@
             </passive>
             <network>{/GigEth-Interface[2]/ospf-net-type}</network>
           </interface>
-          
+
           <interface>
             <name>GigabitEthernet{/GigEth-Interface[3]/GigabitEthernet}</name>
             <passive tags="merge" when="{/def-passive-int='true'}">
@@ -41,7 +41,7 @@
             </passive>
             <network>{/GigEth-Interface[3]/ospf-net-type}</network>
           </interface>
-          
+
           <interface>
             <name>GigabitEthernet{/GigEth-Interface[4]/GigabitEthernet}</name>
             <passive tags="merge" when="{/def-passive-int='true'}">
@@ -49,7 +49,31 @@
             </passive>
             <network>{/GigEth-Interface[4]/ospf-net-type}</network>
           </interface>
-          
+
+          <interface>
+            <name>GigabitEthernet{/GigEth-Interface[5]/GigabitEthernet}</name>
+            <passive tags="merge" when="{/def-passive-int='true'}">
+              <mode>disable</mode>
+            </passive>
+            <network>{/GigEth-Interface[5]/ospf-net-type}</network>
+          </interface>
+
+          <interface>
+            <name>GigabitEthernet{/GigEth-Interface[6]/GigabitEthernet}</name>
+            <passive tags="merge" when="{/def-passive-int='true'}">
+              <mode>disable</mode>
+            </passive>
+            <network>{/GigEth-Interface[6]/ospf-net-type}</network>
+          </interface>
+
+          <interface>
+            <name>GigabitEthernet{/GigEth-Interface[7]/GigabitEthernet}</name>
+            <passive tags="merge" when="{/def-passive-int='true'}">
+              <mode>disable</mode>
+            </passive>
+            <network>{/GigEth-Interface[7]/ospf-net-type}</network>
+          </interface>
+
           <!-- TEMPORARY UNUSED
           <interface>
             <name>GigabitEthernet0/0/0/3</name>
@@ -81,7 +105,7 @@
       </ospf>
       </router>
       <!-- End of OSPF Configuration Template -->
-        
+
       <!-- MPLS LDP Configuration Template -->
       <ipv4 xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge">
         <access-list>
@@ -98,7 +122,7 @@
           </named-acl>
         </access-list>
       </ipv4>
-      
+
       <mpls xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge" when="{/mpls-ldp='true'}">
       <ldp>
         <router-id>{/router-id}</router-id>
@@ -116,17 +140,29 @@
         <interface>
           <name>GigabitEthernet{/GigEth-Interface[1]/GigabitEthernet}</name>
         </interface>
-        
+
         <interface>
           <name>GigabitEthernet{/GigEth-Interface[2]/GigabitEthernet}</name>
         </interface>
-        
+
         <interface>
           <name>GigabitEthernet{/GigEth-Interface[3]/GigabitEthernet}</name>
         </interface>
-        
+
         <interface>
           <name>GigabitEthernet{/GigEth-Interface[4]/GigabitEthernet}</name>
+        </interface>
+
+        <interface>
+          <name>GigabitEthernet{/GigEth-Interface[5]/GigabitEthernet}</name>
+        </interface>
+
+        <interface>
+          <name>GigabitEthernet{/GigEth-Interface[6]/GigabitEthernet}</name>
+        </interface>
+
+        <interface>
+          <name>GigabitEthernet{/GigEth-Interface[7]/GigabitEthernet}</name>
         </interface>
 
         <!-- TEMPORARY UNUSED
@@ -143,7 +179,7 @@
       </ldp>
       </mpls>
       <!-- End of MPLS LDP Configuration Template -->
-      
+
       </config>
     </device>
   </devices>

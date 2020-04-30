@@ -1,40 +1,35 @@
 module vpn-services {
 	namespace "http://com/example/vpn-services";
 	prefix vpn-services;
-	
+
 	import ietf-inet-types {
 		prefix inet;
 	}
-	
+
 	import tailf-ncs {
 		prefix ncs;
 	}
-  
+
 	import tailf-common {
 		prefix tailf;
 	}
-  
+
 	import tailf-ned-cisco-ios-xr {
 		prefix cisco-ios-xr;
 	}
-	
-	/*
-	import tailf-ned-cisco-ios {
-		prefix ios;
-	}*/
-	
+
 	contact rakhmadian_purnama@yahoo.com;
 	description "Customer VPN Services";
-	
+
 	revision 2020-04-05 {
 		description "Draft Release";
 	}
-	
+
 	list vpn-services {
 		key services-name;
-		uses ncs:services-data;
+		uses ncs:service-data;
 		ncs:servicepoint "vpn-services";
-		
+
 		leaf services-name {
 			tailf:info "VPN Services Name";
 			type union {
@@ -44,153 +39,280 @@ module vpn-services {
 				}
 			}
 		}
-		
+
 		leaf service-category {
 			when "../services-name!='id-services'";
 			tailf:info "Service Option";
 			type enumeration {
+				enum vrf-creation;
 				enum static-routing;
 				enum bgp-routing;
 			}
 		}
-		
-	
-		list customer-vrf {
-			key vrf-name;
-			
-			leaf vrf-name{
-				tailf:info "Customer VRF Name";
-				type string;
-			}
-			
-			leaf exported-rt {
-				tailf:info "Exported Route Target";
-				type string;
-			}
-			
-			leaf imported-rt {
-				tailf:info "Imported Route Target";
-				type string;
-			}
-		
-			list Loopback-Interface {
-				when "/ncs:devices/ncs:device[ncs:name=current()/../device]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
+
+//CONTAINER FOR VRF CREATION AND INTERFACE ASSIGNMENT
+		container vrf-creation {
+			when "../service-category='vrf-creation'";
+
+			leaf vrf-node-name {
+				tailf:info "Router which should be configured VRF";
+				type leafref {
+					path "/ncs:devices/ncs:device/ncs:name";
 				}
-			
+			}
+
+			list customer-vrf {
+				key vrf-name;
+
+				leaf vrf-name {
+					tailf:info "Customer VRF Name";
+					type string;
+				}
+
+				leaf exported-rt {
+					tailf:info "Exported Route Target";
+					type string;
+				}
+
+				leaf imported-rt {
+					tailf:info "Imported Route Target";
+					type string;
+				}
+			}
+
+			list Loopback-Interface {
+				//when "/ncs:devices/ncs:device[ncs:name=current()/../vrf-node-name]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
+				//}
+
 				key Loopback;
 				description "List of Loopback interface on XRv router";
 				leaf Loopback {
 					type leafref {
-						path "deref(../../device)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:Loopback/cisco-ios-xr:id";
+						path "deref(../../vrf-node-name)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:Loopback/cisco-ios-xr:id";
 					}
-				}			
-			}
-		
-			list GigEth-Interface {
-				when "/ncs:devices/ncs:device[ncs:name=current()/../device]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
 				}
-				
+
+				leaf loopback-address {
+					tailf:info "Loopback IP address";
+					type inet:ipv4-address;
+				}
+
+				leaf loopback-mask {
+					tailf:info "Bit-mask of Loopback interface";
+					type inet:ipv4-address;
+				}
+
+				leaf loop-vrf {
+					tailf:info "Assign Customer VRF under the Loopback";
+					type string;
+				}
+			}
+
+			list GigEth-Interface {
+				//when "/ncs:devices/ncs:device[ncs:name=current()/../vrf-node-name]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
+				//}
+
 				key GigabitEthernet;
 				description "List of GigabitEthernet interface on XRv router";
 				leaf GigabitEthernet {
 					type leafref {
-						path "deref(../../device)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:GigabitEthernet/cisco-ios-xr:id";
-					}
-				}		
-			}
-			
-			list vrf-node {
-				key vrf-node-name;
-				
-				leaf vrf-node-name {
-					tailf:info "Router which should be configured VRF";
-					type leafref {
-						path "/ncs:devices/ncs:device/ncs:name";
+						path "deref(../../vrf-node-name)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:GigabitEthernet/cisco-ios-xr:id";
 					}
 				}
-			}			
+
+				leaf gig-int-address {
+					tailf:info "GigabitEthernet IP Address";
+					type inet:ipv4-address;
+				}
+
+				leaf gig-int-mask {
+					tailf:info "Bit-mask of GigabitEthernet interface";
+					type inet:ipv4-address;
+				}
+
+				leaf gig-vrf {
+					tailf:info "Assign Customer VRF under the interface";
+					type string;
+				}
+
+				leaf int-enabled {
+					tailf:info "Shutdown/No-Shutdown GigabitEthernet interface";
+					type boolean;
+					default true;
+				}
+			}
 		}
-		
+
+//CONTAINER FOR STATIC ROUTING
 		container static-routing {
+			when "../service-category='static-routing'";
+
+			leaf static-node {
+				tailf:info "Router where static routing is applied";
+				type leafref {
+					path "/ncs:devices/ncs:device/ncs:name";
+				}
+			}
+
 			list static {
 				key "net-address mask-length";
-				
-				leaf static-node {
-					tailf:info "Router which has static routing";
-					type leafref {
-						path "/ncs:devices/ncs:device/ncs:name";					
-					}
-				}
-				
+				tailf:info "Static route up to 3 entries";
+
 				leaf cust-vrf-name {
 					tailf:info "VRF Customer for Static Routing";
 					type string;
 				}
-				
+
 				leaf net-address {
 					tailf:info "Network Address of Customer";
-					type inet:ipv4-address;						
+					type inet:ipv4-address;
 				}
-				
+
 				leaf mask-length {
 					tailf:info "Netmask Address";
-					type uint16;
-					default 24;
+					type uint16{
+						range "24..32";
+					}
 				}
-				
+
 				leaf next-hop {
 					tailf:info "Next-hop Address";
 					type inet:ipv4-address;
 				}
 			}
 		}
-		
-		/* SEPARATED SERVICES -- Temporary Unused
+
+//CONTAINER FOR BGP ROUTING
 		container bgp-routing {
+			when "../service-category='bgp-routing'";
+
+			leaf bgp-node {
+				tailf:info "BGP Router Node";
+				type leafref {
+					path "/ncs:devices/ncs:device/ncs:name";
+				}
+			}
+
 			list bgp {
 				key asn;
-				
-				leaf bgp-node {
-					tailf:info "BGP Router Node";
-					type leafref {
-						path "/ncs:devices/ncs:device/ncs:name";
-					}
-				}
-				
+				tailf:info "BGP routing configuration for VPN Services";
+
 				leaf asn {
 					tailf:info "BGP AS Number";
 					type uint16;
 				}
-				
+
 				leaf bgp-rid {
 					tailf:info "BGP Router ID";
 					type inet:ipv4-address;
 				}
-				
-				list bgp-peer {
-					tailf:info "BGP Peer List";
+
+				leaf bgp-afi-ipv4 {
+					tailf:info "BPG Address-Family IPv4 Enable?";
+					type boolean;
+					default true;
+				}
+
+				leaf bgp-afi-vpnv4 {
+					tailf:info "BGP Address-Family VPNv4 Enable?";
+					type boolean;
+					default true;
+				}
+
+				list mp-bgp-peer {
+					tailf:info "BGP Peer List (up to 4 BGP neighbors)";
 					key "peer-id peer-asn";
-					
+
 					leaf peer-id {
 						tailf:info "Neighbor ID";
 						type inet:ipv4-address;
 					}
-					
+
 					leaf peer-asn {
 						tailf:info "Neighbor AS Number";
 						type uint16;
 					}
+
+					leaf update-loopback-intf {
+					//	when "/ncs:devices/ncs:device[ncs:name=current()/../../../bgp-node]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
+					//	}
+						tailf:info "mp-BGP Update Source Interface";
+						type leafref {
+							path "deref(../../../bgp-node)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:Loopback/cisco-ios-xr:id";
+						}
+					}
 				}
-			}		
-		}		
-		*/
-		
-		/* Temporary Unused
-		leaf device {
-			tailf:info "L3VPN Device";
-			type leafref {
-				path "/ncs:devices/ncs:device/ncs:name";
+
+				list bgp-vrf-services {
+					key bgp-vrf-name;
+					tailf:info "BGP Customer VPN services (up to 2 VRF services)";
+
+					leaf bgp-vrf-name {
+						tailf:info "BGP VRF Customer Services Name";
+						type string;
+					}
+
+					leaf rd-id {
+						tailf:info "Route Distinguisher";
+						type string;
+					}
+					leaf if-cust-static {
+						tailf:info "Condition where routing protocol to customer is using static route";
+						type boolean;
+						default false;
+					}
+
+					leaf if-cust-bgp {
+						tailf:info "Condition where routing protocol to customer is using BGP route";
+						type boolean;
+						default false;
+					}
+
+					leaf if-adv-network {
+						tailf:info "If we want to advertise specific network address";
+						type boolean;
+						default false;
+					}
+
+					leaf adv-network {
+						type inet:ipv4-address;
+					}
+
+					leaf adv-bit-mask {
+						type uint16;
+					}
+
+					list cust-bgp-peer {
+						tailf:info "BGP Customer Peer under specific VRF";
+						key "cust-peer cust-asn";
+
+						leaf cust-peer {
+							tailf:info "BGP Customer Neighbor Address";
+							type inet:ipv4-address;
+						}
+
+						leaf cust-asn {
+							tailf:info "BGP Customer AS Number";
+							type uint16;
+						}
+
+						leaf update-source-intf {
+						//	when "/ncs:devices/ncs:device[ncs:name=current()/../../../../bgp-node]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
+						//	}
+							tailf:info "BGP Update Source Interface";
+							type leafref {
+								path "deref(../../../../bgp-node)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:GigabitEthernet/cisco-ios-xr:id";
+							}
+						}
+
+						leaf default-rpl-ebgp {
+							tailf:info "Enable Route Policy on EBGP for exchanging prefix on IOS-XR";
+							type boolean;
+							default true;
+						}
+					}
+				}
 			}
-		}*/
+		}
 	}
 }
