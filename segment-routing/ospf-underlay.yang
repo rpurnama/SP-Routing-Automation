@@ -26,8 +26,8 @@ module ospf-underlay {
 	contact rakhmadian_purnama@yahoo.com;
 	description "OSPF Underlay for Segment Routing Network";
 	
-	revision 2020-03-05 {
-		description "Beta Release 1.0";
+	revision 2020-01-01 {
+		description "Initial draft revision";
 	}
 
 	list ospf-underlay {
