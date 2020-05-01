@@ -1,31 +1,31 @@
 module ospf-underlay {
 	namespace "http://com/example/ospf-underlay";
 	prefix ospf-underlay;
-	
+
 	import ietf-inet-types {
 		prefix inet;
 	}
-  
+
 	import tailf-ncs {
 		prefix ncs;
 	}
-  
+
 	import tailf-common {
 		prefix tailf;
 	}
-  
+
 	import tailf-ned-cisco-ios-xr {
 		prefix cisco-ios-xr;
 	}
-  
+
 	/*
 	import tailf-ned-cisco-ios {
 		prefix ios;
 	}*/
-  
+
 	contact rakhmadian_purnama@yahoo.com;
 	description "OSPF Underlay for Segment Routing Network";
-	
+
 	revision 2020-01-01 {
 		description "Initial draft revision";
 	}
@@ -34,38 +34,38 @@ module ospf-underlay {
 		key name;
 		uses ncs:service-data;
 		ncs:servicepoint "ospf-underlay";
-		
+
 		leaf name {
 			tailf:info "Transport Service Name";
 			type string;
 		}
-		
+
 		leaf ospf-id {
-			tailf:info "OSPF Process ID";			
+			tailf:info "OSPF Process ID";
 			type uint16 {
 				range "1..100";
 			}
 			default "1";
 		}
-		
+
 		leaf device {
 			tailf:info "OSPF Device";
 			type leafref {
 				path "/ncs:devices/ncs:device/ncs:name";
 			}
 		}
-		
+
 		leaf router-id {
 			tailf:info "OSPF Router ID";
 			type inet:ip-address;
 		}
-		
+
 		leaf def-passive-int {
 			tailf:info "Default Passive Interface";
 			type boolean;
 			default true;
 		}
-		
+
 		leaf area-id {
 			tailf:info "OSPF Area ID";
 			default 0;
@@ -73,25 +73,31 @@ module ospf-underlay {
 				range "0..255";
 			}
 		}
-		
+
 		leaf mpls-ldp {
 			tailf:info "MPLS LDP Enabled";
 			type boolean;
 			default false;
 		}
-		
+
+		leaf block-ldp {
+			tailf:info "Block UDP port of MPLS-LDP";
+			type boolean;
+			default false;
+		}
+
 		leaf rsvp-te {
 			tailf:info "RSVP-TE Enabled";
 			type boolean;
 			default false;
 		}
-		
+
 		leaf segment-routing {
 			tailf:info "Enable SR";
 			type boolean;
 			default false;
 		}
-		
+
 		leaf sr-pfx-sid {
 			when "/ncs:devices/ncs:device[ncs:name=current()/../device]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
 			}
@@ -99,22 +105,28 @@ module ospf-underlay {
 			type uint16 {
 				range "0..255";
 			}
-			
+
 		}
-		
+
+		leaf sr-mapping-server {
+			tailf:info "If this router is SR Mapping Server";
+			type boolean;
+			default false;
+		}
+
 		list Loopback-Interface {
 			when "/ncs:devices/ncs:device[ncs:name=current()/../device]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
 			}
-			
+
 			key Loopback;
 			description "List of Loopback interface on XRv router";
 			leaf Loopback {
 				type leafref {
 					path "deref(../../device)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:Loopback/cisco-ios-xr:id";
 				}
-			}			
+			}
 		}
-		
+
 		list GigEth-Interface {
 			when "/ncs:devices/ncs:device[ncs:name=current()/../device]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-iosxr-cli-7.18:cisco-iosxr-cli-7.18'"{
 			}
@@ -125,18 +137,48 @@ module ospf-underlay {
 					path "deref(../../device)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:GigabitEthernet/cisco-ios-xr:id";
 				}
 			}
-			
+
 			leaf ospf-net-type {
 				tailf:info "GE OSPF Network Type";
 				type enumeration {
 					enum point-to-point;
 					enum broadcast;
 				}
-				default point-to-point;			
+				default point-to-point;
 			}
-		
 		}
-		
+
+		list mapping-server {
+			key ms-prefix;
+			description "List of Prefix-SID Mapping for Non-SR Enabled Devices";
+
+			leaf ms-prefix {
+				tailf:info "Mapped Prefix-SID";
+				type inet:ipv4-address;
+			}
+
+			leaf ms-prefix-mask {
+				tailf:info "Bit-mask of Prefix-SID";
+				type uint16 {
+					range "24..32";
+				}
+			}
+
+			leaf ms-sid-interval {
+					tailf:info "SID Interval Mapping";
+					type uint16 {
+						range "1000..2000";
+					}
+			}
+
+			leaf ms-prefix-range {
+				tailf:info "Prefix-SID Range";
+				type uint8 {
+					range "1..3";
+				}
+			}
+		}
+
 		/* TEMPORARY UNUSED
 		choice interface {
 			case loop {
@@ -146,14 +188,14 @@ module ospf-underlay {
 					}
 				}
 			}
-			
+
 			case gig {
 				leaf GigabitEthernet {
 					type leafref {
 						path "deref(../device)/../ncs:config/cisco-ios-xr:interface/cisco-ios-xr:GigabitEthernet/cisco-ios-xr:id";
 					}
 				}
-				
+
 				leaf GigEth-ospf-net-type {
 					tailf:info "GE OSPF Network Type";
 					type enumeration {
@@ -162,7 +204,7 @@ module ospf-underlay {
 					}
 					default point-to-point;
 				}
-			}	
+			}
 		}*/
 	}
 }

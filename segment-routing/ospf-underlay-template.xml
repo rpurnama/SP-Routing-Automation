@@ -94,6 +94,9 @@
           <mpls/>
           <sr-prefer>
           </sr-prefer>
+          <prefix-sid-map tags="merge" when="{/sr-mapping-server='true'}">
+            <advertise-local/>
+          </prefix-sid-map>
         </segment-routing>
         <mpls tags="merge">
           <traffic-eng>
@@ -106,7 +109,37 @@
       </router>
       <!-- End of OSPF Configuration Template -->
 
-      <!-- MPLS LDP Configuration Template -->
+      <!-- SR Mapping Server Configuration -->
+      <segment-routing xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge" when="{/sr-mapping-server='true'}">
+        <mapping-server>
+          <prefix-sid-map>
+            <address-family>
+              <ipv4>
+                <prefix>
+                  <prefix>{/mapping-server[1]/ms-prefix}/{/mapping-server[1]/ms-prefix-mask}</prefix>
+                  <SID-interval>{/mapping-server[1]/ms-sid-interval}</SID-interval>
+                  <range>{/mapping-server[1]/ms-prefix-range}</range>
+                </prefix>
+
+                <prefix>
+                  <prefix>{/mapping-server[2]/ms-prefix}/{/mapping-server[2]/ms-prefix-mask}</prefix>
+                  <SID-interval>{/mapping-server[2]/ms-sid-interval}</SID-interval>
+                  <range>{/mapping-server[2]/ms-prefix-range}</range>
+                </prefix>
+
+                <prefix>
+                  <prefix>{/mapping-server[3]/ms-prefix}/{/mapping-server[3]/ms-prefix-mask}</prefix>
+                  <SID-interval>{/mapping-server[3]/ms-sid-interval}</SID-interval>
+                  <range>{/mapping-server[3]/ms-prefix-range}</range>
+                </prefix>
+
+              </ipv4>
+            </address-family>
+          </prefix-sid-map>
+        </mapping-server>
+      </segment-routing>
+
+      <!-- Access-List to Block LDP Packet -->
       <ipv4 xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge">
         <access-list>
           <named-acl>
@@ -123,14 +156,15 @@
         </access-list>
       </ipv4>
 
+      <!--MPLS LDP Configuration -->
       <mpls xmlns="http://tail-f.com/ned/cisco-ios-xr" tags="merge" when="{/mpls-ldp='true'}">
       <ldp>
         <router-id>{/router-id}</router-id>
-        <address-family tags="merge" when="{/segment-routing='true'}">
+        <address-family tags="merge">
           <ipv4>
             <label>
               <local>
-                <allocate>
+                <allocate tags="merge" when="{/block-ldp='true'}">
                   <for>no_ldp</for>
                 </allocate>
               </local>
