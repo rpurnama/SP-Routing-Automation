@@ -1,0 +1,17 @@
+interface Loopback0
+ ip address 100.100.100.1 255.255.255.255
+!
+interface FastEthernet0/0
+ ip address 100.100.1.2 255.255.255.252
+ no shutdown
+!
+!
+router bgp 65002
+ no synchronization
+ bgp router-id 100.100.100.1
+ bgp log-neighbor-changes
+ network 100.100.100.1 mask 255.255.255.255
+ neighbor 100.100.1.1  remote-as 65001
+ neighbor 100.100.1.1 update-source FastEthernet0/0
+ no auto-summary
+!
