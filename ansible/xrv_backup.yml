@@ -1,6 +1,6 @@
 ---
 #This script is written by @rpoernama
-- hosts: xrv-routers
+- hosts: xrv
   gather_facts: false
   connection: local
 

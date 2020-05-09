@@ -1,0 +1,21 @@
+---
+- name: MPLS L3VPN Automation
+  hosts: CE-A1, CE-A2
+  gather_facts: false
+  connection: network_cli
+  become: yes
+
+  vars_files:
+   - ./group_vars/vars_customer-A.yaml
+
+  tasks:  
+   - name: Rendering configuration of Customer A
+     template:
+      src: "./templates/customer-A.j2"
+      dest: "./config/{{ item.value.hostname }}.txt"
+     with_dict: "{{ routers }}"
+
+   - name: Push Config
+     ios_config:
+      src: "./config/{{ inventory_hostname }}.txt"
+      timeout: 30
