@@ -1,0 +1,8 @@
+interface Loopback0
+ ip address {{ item.value.lo0_address }}
+!
+interface FastEthernet0/0
+ ip address {{ item.value.fa0_0_address }}
+ no {{ item.value.shutdown_fe }}
+!
+ip route {{ item.value.default_route }} {{ item.value.next_hop }} name DEFAULT-ROUTE

@@ -1,0 +1,17 @@
+interface Loopback0
+ ip address {{ item.value.lo0_addr}}
+!
+interface FastEthernet0/0
+ ip address {{ item.value.fa0_0_addr}}
+ no {{ item.value.disable_fe }}
+!
+!
+router bgp {{ item.value.bgp_asn }}
+ no synchronization
+ bgp router-id {{ item.value.bgp_rid }}
+ bgp log-neighbor-changes
+ network {{ item.value.bgp_advertised_network }} mask {{ item.value.bgp_advertised_netmask }}
+ neighbor {{ item.value.bgp_neighbor }}  remote-as {{ item.value.bgp_remote_asn }}
+ neighbor {{ item.value.bgp_neighbor }} update-source {{ item.value.bgp_src_intf }}
+ no auto-summary
+!
