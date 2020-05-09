@@ -1,0 +1,17 @@
+---
+routers:
+ CE-A1:
+   hostname: "CE-A1"
+   lo0_address: "99.99.99.1 255.255.255.255"
+   fa0_0_address: "99.99.1.2 255.255.255.252"
+   shutdown_fe: "shutdown"
+   default_route: "0.0.0.0 0.0.0.0"
+   next_hop: "99.99.1.1"
+
+ CE-A2:
+   hostname: "CE-A2"
+   lo0_address: "99.99.99.2 255.255.255.255"
+   fa0_0_address: "99.99.2.2 255.255.255.252"
+   shutdown_fe: "shutdown"
+   default_route: "0.0.0.0 0.0.0.0"
+   next_hop: "99.99.2.1"

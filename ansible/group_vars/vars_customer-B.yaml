@@ -1,0 +1,27 @@
+---
+routers:
+ CE-B1:
+  hostname: "CE-B1"
+  lo0_addr: "100.100.100.1 255.255.255.255"
+  fa0_0_addr: "100.100.1.2 255.255.255.252"
+  disable_fe: "shutdown"
+  bgp_asn: "65002"
+  bgp_rid: "100.100.100.1"
+  bgp_advertised_network: "100.100.100.1"
+  bgp_advertised_netmask: "255.255.255.255"
+  bgp_neighbor: "100.100.1.1"
+  bgp_remote_asn: "65001"
+  bgp_src_intf: "FastEthernet0/0"
+
+ CE-B2:
+  hostname: "CE-B2"
+  lo0_addr: "100.100.100.2 255.255.255.255"
+  fa0_0_addr: "100.100.2.2 255.255.255.252"
+  disable_fe: "shutdown"
+  bgp_asn: "65002"
+  bgp_rid: "100.100.100.2"
+  bgp_advertised_network: "100.100.100.2"
+  bgp_advertised_netmask: "255.255.255.255"
+  bgp_neighbor: "100.100.2.1"
+  bgp_remote_asn: "65001"
+  bgp_src_intf: "FastEthernet0/0"
